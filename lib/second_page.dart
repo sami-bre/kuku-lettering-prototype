@@ -24,20 +24,7 @@ class _SecondPageState extends State<SecondPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: GestureDetector(
-          child: Container(
-            width: 200, // Replace with your desired width
-            height: 200, // Replace with your desired height
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image:
-                    AssetImage('assets/ha.jpg'), // Replace with your image path
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: MyDrawingWidget(widget.points),
-          ),
-        ),
+        child: MyDrawingWidget(widget.points),
       ),
     );
   }
@@ -53,32 +40,99 @@ class MyDrawingWidget extends StatefulWidget {
 class _MyDrawingWidgetState extends State<MyDrawingWidget> {
   List<Offset> drawingPoints = [];
   int counter = 0;
+  late double targetDistance;
+  String? comment;
+
+  @override
+  void initState() {
+    super.initState();
+    // set the target distance to the sum of the distances between consecutinve target points
+    targetDistance = getDistanceFromPoints(widget.targetPoints);
+  }
+
+  double getDistanceFromPoints(List<Offset> points) {
+    double distance = 0;
+    for (int i = 0; i < points.length - 1; i++) {
+      if (points[i] == Offset.zero || points[i + 1] == Offset.zero) {
+        continue;
+      }
+      distance += (points[i] - points[i + 1]).distance;
+    }
+    return distance;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onPanUpdate: (details) {
-        if (counter == widget.targetPoints.length) return;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onPanUpdate: (details) {
+            if (counter == widget.targetPoints.length) return;
 
-        RenderBox renderBox = context.findRenderObject() as RenderBox;
-        var localPoint = renderBox.globalToLocal(details.globalPosition);
-        setState(() {
-          drawingPoints.add(localPoint);
-        });
-        // see if the local point is within a certain distance of the target point
-        // where the target points is the counter's index in the list
-        if ((localPoint - widget.targetPoints[counter]).distance < 10) {
-          counter++;
-        }
-        // if counter is equal to the length of the target points list, then the user has completed the drawing
-        if (counter == widget.targetPoints.length) {
-          print("Drawing completed");
-        }
-      },
-      onPanEnd: (details) => drawingPoints.add(Offset.zero),
-      child: CustomPaint(
-        painter: MyPainter(drawingPoints),
-      ),
+            RenderBox renderBox = context.findRenderObject() as RenderBox;
+            var localPoint = renderBox.globalToLocal(details.globalPosition);
+            setState(() {
+              drawingPoints.add(localPoint);
+            });
+            // see if the local point is within a certain distance of the target point
+            // where the target points is the counter's index in the list
+            if ((localPoint - widget.targetPoints[counter]).distance < 10) {
+              counter++;
+            }
+            // if counter is equal to the length of the target points list, then the user has completed the drawing
+            if (counter == widget.targetPoints.length) {
+              // calculate the distance between the drawing points
+              double distance = getDistanceFromPoints(drawingPoints);
+              // if the distance is within 20% of the target distance, then the user has drawn the image correctly
+              if (distance < targetDistance * 1.2) {
+                setState(() {
+                  comment = "good";
+                });
+                print(
+                    'good! tagetDistance: $targetDistance, actual distance: $distance');
+              } else {
+                setState(() {
+                  comment = "bad";
+                });
+                print(
+                    'bad! tagetDistance: $targetDistance, actual distance: $distance');
+              }
+            }
+          },
+          onPanEnd: (details) => drawingPoints.add(Offset.zero),
+          child: Container(
+            width: 200, // Replace with your desired width
+            height: 200, // Replace with your desired height
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image:
+                    AssetImage('assets/ha.jpg'), // Replace with your image path
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: CustomPaint(
+              painter: MyPainter(drawingPoints),
+            ),
+          ),
+        ),
+        const SizedBox(height: 30),
+        ElevatedButton(
+          onPressed: () {
+            setState(() {
+              drawingPoints.clear();
+              counter = 0;
+              comment = null;
+            });
+          },
+          child: const Text("clear"),
+        ),
+        if (comment != null)
+          Text(
+            comment!,
+            style: TextStyle(fontSize: 18),
+          )
+      ],
     );
   }
 }
