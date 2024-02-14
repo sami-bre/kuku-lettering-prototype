@@ -35,7 +35,7 @@ class _SecondPageState extends State<SecondPage> {
                 fit: BoxFit.cover,
               ),
             ),
-            child: MyDrawingWidget(),
+            child: MyDrawingWidget(widget.points),
           ),
         ),
       ),
@@ -44,25 +44,40 @@ class _SecondPageState extends State<SecondPage> {
 }
 
 class MyDrawingWidget extends StatefulWidget {
+  final List<Offset> targetPoints;
+  const MyDrawingWidget(this.targetPoints, {super.key});
   @override
   _MyDrawingWidgetState createState() => _MyDrawingWidgetState();
 }
 
 class _MyDrawingWidgetState extends State<MyDrawingWidget> {
-  List<Offset> points = [];
+  List<Offset> drawingPoints = [];
+  int counter = 0;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onPanUpdate: (details) {
+        if (counter == widget.targetPoints.length) return;
+
+        RenderBox renderBox = context.findRenderObject() as RenderBox;
+        var localPoint = renderBox.globalToLocal(details.globalPosition);
         setState(() {
-          RenderBox renderBox = context.findRenderObject() as RenderBox;
-          points.add(renderBox.globalToLocal(details.globalPosition));
+          drawingPoints.add(localPoint);
         });
+        // see if the local point is within a certain distance of the target point
+        // where the target points is the counter's index in the list
+        if ((localPoint - widget.targetPoints[counter]).distance < 10) {
+          counter++;
+        }
+        // if counter is equal to the length of the target points list, then the user has completed the drawing
+        if (counter == widget.targetPoints.length) {
+          print("Drawing completed");
+        }
       },
-      onPanEnd: (details) => points.add(Offset.zero),
+      onPanEnd: (details) => drawingPoints.add(Offset.zero),
       child: CustomPaint(
-        painter: MyPainter(points),
+        painter: MyPainter(drawingPoints),
       ),
     );
   }
@@ -77,7 +92,7 @@ class MyPainter extends CustomPainter {
     Paint paint = Paint()
       ..color = Colors.red
       ..strokeCap = StrokeCap.round
-      ..strokeWidth = 5.0;
+      ..strokeWidth = 10;
 
     for (int i = 0; i < points.length - 1; i++) {
       if (points[i] != Offset.zero && points[i + 1] != Offset.zero) {
