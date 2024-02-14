@@ -108,23 +108,31 @@ class _CoordinateListWidgetState extends State<CoordinateListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (TapDownDetails details) {
-        _addCoordinatePoint(details.localPosition);
-      },
-      child: Container(
-        width: 200, // Replace with your desired width
-        height: 200, // Replace with your desired height
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/ha.jpg'), // Replace with your image path
-            fit: BoxFit.cover,
+    return Column(
+      children: [
+        GestureDetector(
+          onTapDown: (TapDownDetails details) {
+            _addCoordinatePoint(details.localPosition);
+          },
+          child: Container(
+            width: 200, // Replace with your desired width
+            height: 200, // Replace with your desired height
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image:
+                    AssetImage('assets/ha.jpg'), // Replace with your image path
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: CustomPaint(
+              painter: CoordinatePointsPainter(coordinatePoints),
+            ),
           ),
         ),
-        child: CustomPaint(
-          painter: CoordinatePointsPainter(coordinatePoints),
-        ),
-      ),
+        const SizedBox(height: 30),
+        for (Offset point in coordinatePoints)
+          Text("(${point.dx}, ${point.dy})")
+      ],
     );
   }
 }
