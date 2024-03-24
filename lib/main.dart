@@ -58,8 +58,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
   final GlobalKey<_CoordinateListWidgetState> _coordinateListKey =
       GlobalKey<_CoordinateListWidgetState>();
 
@@ -99,6 +97,7 @@ class CoordinateListWidget extends StatefulWidget {
 
 class _CoordinateListWidgetState extends State<CoordinateListWidget> {
   List<Offset> coordinatePoints = [];
+  List<Offset> keyPoints = [];
 
   void _addCoordinatePoint(Offset point) {
     setState(() {
@@ -111,13 +110,15 @@ class _CoordinateListWidgetState extends State<CoordinateListWidget> {
     return Column(
       children: [
         GestureDetector(
-          onTapDown: (TapDownDetails details) {
-            _addCoordinatePoint(details.localPosition);
+          onPanUpdate: (details) {
+            RenderBox renderBox = context.findRenderObject() as RenderBox;
+            var localPoint = renderBox.globalToLocal(details.globalPosition);
+            _addCoordinatePoint(localPoint);
           },
           child: Container(
             width: 200, // Replace with your desired width
             height: 200, // Replace with your desired height
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image:
                     AssetImage('assets/ha.jpg'), // Replace with your image path
@@ -125,13 +126,28 @@ class _CoordinateListWidgetState extends State<CoordinateListWidget> {
               ),
             ),
             child: CustomPaint(
-              painter: CoordinatePointsPainter(coordinatePoints),
+              painter: CoordinatePointsPainter(
+                  coordinatePoints: coordinatePoints, keyPoints: keyPoints),
             ),
           ),
         ),
         const SizedBox(height: 30),
-        for (Offset point in coordinatePoints)
-          Text("(${point.dx}, ${point.dy})")
+        ElevatedButton(
+          onPressed: () {
+            setState(() {
+              coordinatePoints.clear();
+              keyPoints.clear();
+            });
+          },
+          child: const Text('Clear'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            keyPoints.addAll(ShapeContext.identifyKeypoints(coordinatePoints));
+            setState(() {});
+          },
+          child: const Text('key points'),
+        ),
       ],
     );
   }
@@ -139,8 +155,10 @@ class _CoordinateListWidgetState extends State<CoordinateListWidget> {
 
 class CoordinatePointsPainter extends CustomPainter {
   final List<Offset> coordinatePoints;
+  final List<Offset> keyPoints;
 
-  CoordinatePointsPainter(this.coordinatePoints);
+  CoordinatePointsPainter(
+      {required this.coordinatePoints, required this.keyPoints});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -151,6 +169,15 @@ class CoordinatePointsPainter extends CustomPainter {
 
     for (final point in coordinatePoints) {
       canvas.drawPoints(PointMode.points, [point], paint);
+    }
+
+    final keyPaint = Paint()
+      ..color = Colors.blue // Replace with your desired color
+      ..strokeWidth = 7
+      ..strokeCap = StrokeCap.round;
+
+    for (final point in keyPoints) {
+      canvas.drawPoints(PointMode.points, [point], keyPaint);
     }
   }
 

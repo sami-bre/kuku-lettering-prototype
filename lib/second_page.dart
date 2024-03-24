@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 
@@ -12,14 +12,6 @@ class SecondPage extends StatefulWidget {
 }
 
 class _SecondPageState extends State<SecondPage> {
-  List<Offset> coordinatePoints = [];
-
-  void _addCoordinatePoint(Offset point) {
-    setState(() {
-      coordinatePoints.add(point);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,6 +34,7 @@ class _MyDrawingWidgetState extends State<MyDrawingWidget> {
   int counter = 0;
   late double targetDistance;
   String? comment;
+  double? similarity;
 
   @override
   void initState() {
@@ -119,17 +112,39 @@ class _MyDrawingWidgetState extends State<MyDrawingWidget> {
         const SizedBox(height: 30),
         ElevatedButton(
           onPressed: () {
+            var _similarity =
+                ShapeContext.compare(widget.targetPoints, drawingPoints);
+            setState(() {
+              similarity = _similarity;
+            });
+          },
+          child: const Text("shape context"),
+        ),
+        ElevatedButton(
+          onPressed: () {
             setState(() {
               drawingPoints.clear();
               counter = 0;
               comment = null;
+              similarity = null;
             });
           },
           child: const Text("clear"),
         ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text("back"),
+        ),
         if (comment != null)
           Text(
             comment!,
+            style: TextStyle(fontSize: 18),
+          ),
+        if (similarity != null)
+          Text(
+            "similarity: $similarity",
             style: TextStyle(fontSize: 18),
           )
       ],
@@ -161,5 +176,121 @@ class MyPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true;
+  }
+}
+
+class ShapeContext {
+  // Function to calculate Euclidean distance between two points
+  static double euclideanDistance(Offset p1, Offset p2) {
+    final dx = p1.dx - p2.dx;
+    final dy = p1.dy - p2.dy;
+    return sqrt(dx * dx + dy * dy);
+  }
+
+  static List<Offset> identifyKeypoints(List<Offset> points) {
+    List<Offset> keypoints = [];
+
+    for (int i = 1; i < points.length - 1; i++) {
+      Offset prevPoint = points[max(0, i - 1)];
+      Offset currentPoint = points[i];
+      Offset nextPoint = points[min(points.length - 1, i + 1)];
+
+      double prevAngle =
+          atan2(currentPoint.dy - prevPoint.dy, currentPoint.dx - prevPoint.dx);
+      double nextAngle =
+          atan2(nextPoint.dy - currentPoint.dy, nextPoint.dx - currentPoint.dx);
+
+      double angleDifference = (nextAngle - prevAngle).abs();
+
+      if (angleDifference > 1.1) {
+        // Adjust the threshold as needed
+        keypoints.add(currentPoint);
+      }
+    }
+
+    return keypoints;
+  }
+
+  // Function to calculate local descriptors for keypoints
+  static List<List<int>> calculateLocalDescriptors(
+      List<Offset> keypoints, List<Offset> points) {
+    final descriptor = List<List<int>>.generate(
+        keypoints.length, (_) => List<int>.filled(keypoints.length, 0));
+
+    for (int i = 0; i < keypoints.length; i++) {
+      final keypoint = keypoints[i];
+      final distances =
+          keypoints.map((point) => euclideanDistance(keypoint, point)).toList();
+
+      // Populate the descriptor with the distances to all keypoints
+      for (int j = 0; j < keypoints.length; j++) {
+        descriptor[i][j] =
+            (distances[j] * 10).round(); // Multiply by 10 for simplicity
+      }
+    }
+
+    return descriptor;
+  }
+
+  // Function to concatenate descriptors into a single feature vector
+  static List<int> concatenateDescriptors(List<List<int>> descriptors) {
+    final featureVector = <int>[];
+
+    for (final descriptor in descriptors) {
+      featureVector.addAll(descriptor);
+    }
+
+    return featureVector;
+  }
+
+  // Function to measure similarity between two feature vectors using cosine similarity
+  static double measureSimilarity(List<int> vector1, List<int> vector2) {
+    final len1 = vector1.length;
+    final len2 = vector2.length;
+    final maxLength = max(len1, len2);
+
+    // Pad the shorter vector with 0s
+    final paddedVector1 = List<int>.filled(maxLength, 0);
+    final paddedVector2 = List<int>.filled(maxLength, 0);
+
+    for (int i = 0; i < len1; i++) {
+      paddedVector1[i] = vector1[i];
+    }
+
+    for (int i = 0; i < len2; i++) {
+      paddedVector2[i] = vector2[i];
+    }
+
+    double dotProduct = 0.0;
+    double normVector1 = 0.0;
+    double normVector2 = 0.0;
+
+    // Calculate dot product and norms
+    for (int i = 0; i < maxLength; i++) {
+      dotProduct += paddedVector1[i] * paddedVector2[i];
+      normVector1 += paddedVector1[i] * paddedVector1[i];
+      normVector2 += paddedVector2[i] * paddedVector2[i];
+    }
+
+    // Calculate cosine similarity
+    double similarity = dotProduct / (sqrt(normVector1) * sqrt(normVector2));
+
+    return similarity;
+  }
+
+  // a function to compare two sets of points
+  static double compare(List<Offset> points1, List<Offset> points2) {
+    final keypoints1 = identifyKeypoints(points1);
+    final keypoints2 = identifyKeypoints(points2);
+
+    final descriptors1 = calculateLocalDescriptors(keypoints1, points1);
+    final descriptors2 = calculateLocalDescriptors(keypoints2, points2);
+
+    final featureVector1 = concatenateDescriptors(descriptors1);
+    final featureVector2 = concatenateDescriptors(descriptors2);
+
+    final similarity = measureSimilarity(featureVector1, featureVector2);
+
+    return similarity;
   }
 }
