@@ -58,8 +58,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
   final GlobalKey<_CoordinateListWidgetState> _coordinateListKey =
       GlobalKey<_CoordinateListWidgetState>();
 
@@ -81,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => SecondPage(
-                  points: _coordinateListKey.currentState!.coordinatePoints)));
+                  strokes: _coordinateListKey.currentState!.strokes)));
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
@@ -98,11 +96,19 @@ class CoordinateListWidget extends StatefulWidget {
 }
 
 class _CoordinateListWidgetState extends State<CoordinateListWidget> {
-  List<Offset> coordinatePoints = [];
+  List<List<Offset>> strokes = [];
+  List<Offset> currentStroke = [];
 
   void _addCoordinatePoint(Offset point) {
     setState(() {
-      coordinatePoints.add(point);
+      currentStroke.add(point);
+    });
+  }
+
+  void _completeStroke() {
+    setState(() {
+      strokes.add(List.from(currentStroke));
+      currentStroke.clear();
     });
   }
 
@@ -117,30 +123,55 @@ class _CoordinateListWidgetState extends State<CoordinateListWidget> {
           child: Container(
             width: 200, // Replace with your desired width
             height: 200, // Replace with your desired height
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
-                image:
-                    AssetImage('assets/ha.jpg'), // Replace with your image path
+                image: AssetImage(
+                    'assets/shu.jpg'), // Replace with your image path
                 fit: BoxFit.cover,
               ),
             ),
             child: CustomPaint(
-              painter: CoordinatePointsPainter(coordinatePoints),
+              painter: CoordinatePointsPainter([...strokes, currentStroke]),
             ),
           ),
         ),
         const SizedBox(height: 30),
-        for (Offset point in coordinatePoints)
-          Text("(${point.dx}, ${point.dy})")
+        ElevatedButton(
+          onPressed: _completeStroke,
+          child: const Text("complete stroke"),
+        ),
+        const SizedBox(height: 10),
+        ElevatedButton(
+          onPressed: () {
+            setState(() {
+              strokes = [];
+              currentStroke = [];
+            });
+          },
+          child: const Text("clear"),
+        ),
+        const SizedBox(height: 20),
+        for (Offset point in currentStroke) Text("(${point.dx}, ${point.dy})")
       ],
     );
   }
 }
 
 class CoordinatePointsPainter extends CustomPainter {
-  final List<Offset> coordinatePoints;
+  final List<List<Offset>> strokes;
+  final List<Color> colors = [
+    Colors.red,
+    Colors.green,
+    Colors.blue,
+    Colors.yellow,
+    Colors.purple,
+    Colors.orange,
+    Colors.pink,
+    Colors.teal,
+    Colors.cyan,
+  ];
 
-  CoordinatePointsPainter(this.coordinatePoints);
+  CoordinatePointsPainter(this.strokes);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -149,14 +180,18 @@ class CoordinatePointsPainter extends CustomPainter {
       ..strokeWidth = 7
       ..strokeCap = StrokeCap.round;
 
-    for (final point in coordinatePoints) {
-      canvas.drawPoints(PointMode.points, [point], paint);
+    for (var i = 0; i < strokes.length; i++) {
+      paint.color = colors[i % colors.length];
+      final stroke = strokes[i];
+      for (final point in stroke) {
+        canvas.drawPoints(PointMode.points, [point], paint);
+      }
     }
   }
 
   @override
   bool shouldRepaint(CoordinatePointsPainter oldDelegate) {
-    var repaint = oldDelegate.coordinatePoints != coordinatePoints;
+    var repaint = oldDelegate.strokes != strokes;
     return true;
   }
 }
