@@ -1,0 +1,16 @@
+<svg width="280" height="280" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M83.6189 253.813C38.3537 245.32 47.2849 195.97 48.5317 74.7035C48.8237 46.2978 68.5319 32.1142 95.8071 24.1752C136.475 12.3383 225.251 33.138 225.251 94.2984C225.251 113.219 214.921 127.139 199.639 135.011C196.917 136.413 197.021 140.394 199.818 141.643C260.807 168.871 248.331 284.677 83.6189 253.813ZM127.364 120.992C185.427 114.71 170.197 78.5608 125.387 78.5817C116.242 78.586 108.758 86.2393 108.758 95.3838V104.283C108.759 114.272 117.432 122.067 127.364 120.992ZM108.758 195.565C108.758 203.421 114.533 210.152 122.32 211.191C176.627 218.435 188.204 165.114 137.793 165.114H124.537C115.823 165.114 108.758 172.179 108.758 180.893V195.565Z" fill="#BF2612"/>
+<ellipse cx="79" cy="142" rx="5" ry="5" transform="rotate(-180 79 142)" fill="white"/>
+<ellipse cx="170" cy="142" rx="5" ry="5" transform="rotate(-180 170 142)" fill="white"/>
+<ellipse cx="79" cy="77" rx="5" ry="5" transform="rotate(-180 79 77)" fill="white"/>
+<ellipse cx="104" cy="54" rx="5" ry="5" transform="rotate(-180 104 54)" fill="white"/>
+<ellipse cx="135" cy="51" rx="5" ry="5" transform="rotate(-180 135 51)" fill="white"/>
+<ellipse cx="190" cy="77" rx="5" ry="5" transform="rotate(-180 190 77)" fill="white"/>
+<ellipse cx="190" cy="111" rx="5" ry="5" transform="rotate(-180 190 111)" fill="white"/>
+<ellipse cx="190" cy="163" rx="5" ry="5" transform="rotate(-180 190 163)" fill="white"/>
+<ellipse cx="190" cy="212" rx="5" ry="5" transform="rotate(-180 190 212)" fill="white"/>
+<ellipse cx="79" cy="217" rx="5" ry="5" transform="rotate(-180 79 217)" fill="white"/>
+<ellipse cx="104" cy="239" rx="5" ry="5" transform="rotate(-180 104 239)" fill="white"/>
+<ellipse cx="135" cy="243" rx="5" ry="5" transform="rotate(-180 135 243)" fill="white"/>
+<path d="M167.39 142.619C247.51 192.292 169.458 243 124.487 243C88.511 243 79.1723 222.303 79 211.954V142.619M167.39 142.619C195.475 115.023 226.214 57.8649 124.487 50C109.325 50 79 57.244 79 86.2198V142.619M167.39 142.619H79" stroke="white"/>
+</svg>

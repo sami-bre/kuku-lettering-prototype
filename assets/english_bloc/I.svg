@@ -1,0 +1,9 @@
+<svg width="280" height="280" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M172.576 232.887C172.512 246.691 161.713 258.064 147.931 258.858C125.279 260.164 106 252.683 106 226.485V47.9442C106 34.7655 115.834 23.7002 128.906 22.0279C185.023 14.8487 173.463 41.1861 172.576 232.887Z" fill="#BF2612"/>
+<ellipse cx="139" cy="37" rx="5" ry="5" transform="rotate(-180 139 37)" fill="white"/>
+<ellipse cx="139" cy="244" rx="5" ry="5" transform="rotate(-180 139 244)" fill="white"/>
+<ellipse cx="139" cy="141" rx="5" ry="5" transform="rotate(-180 139 141)" fill="white"/>
+<ellipse cx="139" cy="89" rx="5" ry="5" transform="rotate(-180 139 89)" fill="white"/>
+<ellipse cx="139" cy="193" rx="5" ry="5" transform="rotate(-180 139 193)" fill="white"/>
+<path d="M139 33.5V245" stroke="white"/>
+</svg>

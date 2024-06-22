@@ -1,0 +1,17 @@
+<svg width="280" height="280" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M243.061 234.475C243.026 243.793 236.965 252.132 228.008 254.702C227.942 254.721 227.876 254.74 227.809 254.758C166.093 272.227 148.704 234.773 104.619 123.095C103.667 120.684 100.084 121.336 100.069 123.928C99.9681 141.659 99.8045 178.8 99.7773 236.355C99.7724 246.536 92.5141 255.255 82.5183 257.186C23.3739 268.608 35.8609 229.076 36.5706 53.1584C36.6218 40.465 44.9152 29.1528 57.1107 25.632C79.4454 19.184 111.199 23.8023 122.711 47.3815C157.57 117.797 165.616 132.96 175.64 157.615C176.615 160.016 180.19 159.315 180.177 156.724C180.085 137.421 179.921 97.5646 179.877 50.0878C179.864 35.3243 191.006 22.8913 205.691 21.3779C257.162 16.0738 243.711 65.5811 243.061 234.475Z" fill="#BF2612"/>
+<path d="M70.5 242V62.4998C72 44.9998 86.8 35.2998 134 136.5C181.2 237.7 203.667 236 209 222.5C211 166.667 214.4 51.7 212 38.5" stroke="white"/>
+<ellipse cx="213" cy="41" rx="5" ry="5" transform="rotate(-180 213 41)" fill="white"/>
+<ellipse cx="213" cy="114" rx="5" ry="5" transform="rotate(-180 213 114)" fill="white"/>
+<ellipse cx="211" cy="187" rx="5" ry="5" transform="rotate(-180 211 187)" fill="white"/>
+<ellipse cx="209" cy="215" rx="5" ry="5" transform="rotate(-180 209 215)" fill="white"/>
+<ellipse cx="184" cy="218" rx="5" ry="5" transform="rotate(-180 184 218)" fill="white"/>
+<ellipse cx="164" cy="192" rx="5" ry="5" transform="rotate(-180 164 192)" fill="white"/>
+<ellipse cx="130" cy="129" rx="5" ry="5" transform="rotate(-180 130 129)" fill="white"/>
+<ellipse cx="99" cy="71" rx="5" ry="5" transform="rotate(-180 99 71)" fill="white"/>
+<ellipse cx="85" cy="55" rx="5" ry="5" transform="rotate(-180 85 55)" fill="white"/>
+<ellipse cx="70" cy="71" rx="5" ry="5" transform="rotate(-180 70 71)" fill="white"/>
+<ellipse cx="70" cy="100" rx="5" ry="5" transform="rotate(-180 70 100)" fill="white"/>
+<ellipse cx="70" cy="172" rx="5" ry="5" transform="rotate(-180 70 172)" fill="white"/>
+<ellipse cx="70" cy="244" rx="5" ry="5" transform="rotate(-180 70 244)" fill="white"/>
+</svg>

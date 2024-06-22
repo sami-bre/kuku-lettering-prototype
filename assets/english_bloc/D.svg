@@ -1,0 +1,16 @@
+<svg width="280" height="280" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M61.0917 248C46.4969 242.429 37 228.245 37 212.624V69.9019C37 53.3969 46.9233 38.522 62.154 32.1629C118.219 8.75521 242.542 12.5273 242.542 139.715C242.542 263.39 125.867 272.722 61.0917 248ZM100.188 183.945C100.188 195.496 109.585 204.982 121.134 204.789C191.644 203.614 184.516 116.083 161.924 91.5978C150.662 79.4007 136.941 75.3084 121.397 75.0496C109.746 74.8556 100.188 84.2429 100.188 95.8956V183.945Z" fill="#BF2612"/>
+<path d="M70 211V79.0004C70 53.0004 93 46.0004 138.5 48.0004C184 50.0004 211 95.5004 212 140C213 184.5 189.5 213.5 138.5 229C97.7 241.4 75.8333 222.167 70 211Z" stroke="white"/>
+<ellipse cx="70" cy="73" rx="5" ry="5" transform="rotate(-180 70 73)" fill="white"/>
+<ellipse cx="95" cy="50" rx="5" ry="5" transform="rotate(-180 95 50)" fill="white"/>
+<ellipse cx="146" cy="50" rx="5" ry="5" transform="rotate(-180 146 50)" fill="white"/>
+<ellipse cx="186" cy="71" rx="5" ry="5" transform="rotate(-180 186 71)" fill="white"/>
+<ellipse cx="207" cy="105" rx="5" ry="5" transform="rotate(-180 207 105)" fill="white"/>
+<ellipse cx="212" cy="140" rx="5" ry="5" transform="rotate(-180 212 140)" fill="white"/>
+<ellipse cx="207" cy="175" rx="5" ry="5" transform="rotate(-180 207 175)" fill="white"/>
+<ellipse cx="186" cy="205" rx="5" ry="5" transform="rotate(-180 186 205)" fill="white"/>
+<ellipse cx="146" cy="226" rx="5" ry="5" transform="rotate(-180 146 226)" fill="white"/>
+<ellipse cx="95" cy="231" rx="5" ry="5" transform="rotate(-180 95 231)" fill="white"/>
+<ellipse cx="70" cy="212" rx="5" ry="5" transform="rotate(-180 70 212)" fill="white"/>
+<ellipse cx="70" cy="143" rx="5" ry="5" transform="rotate(-180 70 143)" fill="white"/>
+</svg>

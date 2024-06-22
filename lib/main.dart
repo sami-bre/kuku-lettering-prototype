@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:lettering_demo/data.dart';
 import 'package:lettering_demo/second_page.dart';
 
 void main() {
@@ -34,30 +36,52 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: LetterListScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
+class LetterListScreen extends StatelessWidget {
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  Widget build(BuildContext context) {
+    final List<Letter> lettersData = letters;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Letter List'),
+      ),
+      body: ListView.builder(
+        itemCount: letters.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      LetterFaceScreen(letter: lettersData[index]),
+                ),
+              );
+            },
+            child: ListTile(
+              title: Text(lettersData[index].letterText),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class LetterFaceScreen extends StatefulWidget {
+  const LetterFaceScreen({super.key, required this.letter});
+
+  final Letter letter;
+
+  @override
+  State<LetterFaceScreen> createState() => _LetterFaceScreenState();
+}
+
+class _LetterFaceScreenState extends State<LetterFaceScreen> {
   final GlobalKey<_CoordinateListWidgetState> _coordinateListKey =
       GlobalKey<_CoordinateListWidgetState>();
 
@@ -73,10 +97,13 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: CoordinateListWidget(key: _coordinateListKey),
+        child: CoordinateListWidget(
+            key: _coordinateListKey, letter: widget.letter),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          var strokes = _coordinateListKey.currentState!.strokes;
+          print(strokes.toString());
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => SecondPage(
                   strokes: _coordinateListKey.currentState!.strokes)));
@@ -89,7 +116,9 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class CoordinateListWidget extends StatefulWidget {
-  const CoordinateListWidget({Key? key}) : super(key: key);
+  final Letter letter;
+  const CoordinateListWidget({Key? key, required this.letter})
+      : super(key: key);
 
   @override
   _CoordinateListWidgetState createState() => _CoordinateListWidgetState();
@@ -99,9 +128,12 @@ class _CoordinateListWidgetState extends State<CoordinateListWidget> {
   List<List<Offset>> strokes = [];
   List<Offset> currentStroke = [];
 
+  late double canvasWidth;
+  late double canvasHeight;
+
   void _addCoordinatePoint(Offset point) {
     setState(() {
-      currentStroke.add(point);
+      currentStroke.add(_normalizePoint(point));
     });
   }
 
@@ -112,10 +144,23 @@ class _CoordinateListWidgetState extends State<CoordinateListWidget> {
     });
   }
 
+  Offset _normalizePoint(Offset point) {
+    double normalizedX = point.dx / canvasWidth;
+    double normalizedY = point.dy / canvasHeight;
+    return Offset(normalizedX, normalizedY);
+  }
+
+  Offset _denormalizePoint(Offset point) {
+    double denormalizedX = point.dx * canvasWidth;
+    double denormalizedY = point.dy * canvasHeight;
+    return Offset(denormalizedX, denormalizedY);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        const SizedBox(height: 60),
         GestureDetector(
           onTapDown: (TapDownDetails details) {
             _addCoordinatePoint(details.localPosition);
@@ -123,16 +168,30 @@ class _CoordinateListWidgetState extends State<CoordinateListWidget> {
           child: Container(
             width: 200, // Replace with your desired width
             height: 200, // Replace with your desired height
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                    'assets/shu.jpg'), // Replace with your image path
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: CustomPaint(
-              painter: CoordinatePointsPainter([...strokes, currentStroke]),
-            ),
+            child: Builder(builder: (context) {
+              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                var size = context.size;
+                canvasWidth = size!.width;
+                canvasHeight = size.height;
+              });
+              return Stack(
+                children: [
+                  SvgPicture.asset(
+                    widget.letter.letterImage,
+                    fit: BoxFit.fill,
+                  ),
+                  CustomPaint(
+                    painter: CoordinatePointsPainter(
+                      [...strokes, currentStroke].map((stroke) {
+                        return stroke.map((point) {
+                          return _denormalizePoint(point);
+                        }).toList();
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              );
+            }),
           ),
         ),
         const SizedBox(height: 30),
