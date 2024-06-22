@@ -14,7 +14,8 @@ class SecondPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: Center(
-        child: MyDrawingWidget(letter: letter, targetStrokes: strokes),
+        child:
+            MyDrawingWidget(letter: letter, normalizedTargetStrokes: strokes),
       ),
     );
   }
@@ -22,9 +23,9 @@ class SecondPage extends StatelessWidget {
 
 class MyDrawingWidget extends StatefulWidget {
   final Letter letter;
-  final List<List<Offset>> targetStrokes;
+  final List<List<Offset>> normalizedTargetStrokes;
   const MyDrawingWidget(
-      {required this.letter, required this.targetStrokes, super.key});
+      {required this.letter, required this.normalizedTargetStrokes, super.key});
   @override
   _MyDrawingWidgetState createState() => _MyDrawingWidgetState();
 }
@@ -44,22 +45,40 @@ class _MyDrawingWidgetState extends State<MyDrawingWidget> {
   late List<bool> strokeValidity; // good or bad trace for each stroke
   bool tracingActive = true; // indicates if the user can still draw (trace)
 
+  late Size canvasSize;
+
+  late List<List<Offset>> targetStrokes;
+
+  final GlobalKey _canvasKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      setUpTargetStrokes();
+    });
+  }
+
+  void setUpTargetStrokes() {
+    canvasSize = _canvasKey.currentContext!.size!;
+    targetStrokes = widget.normalizedTargetStrokes.map((stroke) {
+      return stroke.map((point) {
+        return inflateOffset(point);
+      }).toList();
+    }).toList();
+
     strokeValidity =
-        List.generate(widget.targetStrokes.length, (index) => false);
+        List.generate(targetStrokes.length, (index) => false);
     // set the target distance to the sum of the distances between consecutinve target points
     targetDistances = [];
-    for (int i = 0; i < widget.targetStrokes.length; i++) {
-      targetDistances.add(getDistanceOfStroke(widget.targetStrokes[i]));
+    for (int i = 0; i < targetStrokes.length; i++) {
+      targetDistances.add(getDistanceOfStroke(targetStrokes[i]));
     }
 
     // populate the drawingStrokes list with empty lists
-    for (int i = 0; i < widget.targetStrokes.length; i++) {
+    for (int i = 0; i < targetStrokes.length; i++) {
       drawingStrokes.add([]);
     }
-    print(drawingStrokes.length);
   }
 
   double getDistanceOfStroke(List<Offset> stroke) {
@@ -81,6 +100,10 @@ class _MyDrawingWidgetState extends State<MyDrawingWidget> {
     return distance;
   }
 
+  Offset inflateOffset(Offset offset) {
+    return Offset(offset.dx * canvasSize.width, offset.dy * canvasSize.height);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -88,8 +111,8 @@ class _MyDrawingWidgetState extends State<MyDrawingWidget> {
       children: [
         GestureDetector(
           onPanUpdate: (details) {
-            if (currentOffsetIndex ==
-                widget.targetStrokes[currentStrokeIndex].length) return;
+            if (currentOffsetIndex == targetStrokes[currentStrokeIndex].length)
+              return;
 
             RenderBox renderBox = context.findRenderObject() as RenderBox;
             var localPoint = renderBox.globalToLocal(details.globalPosition);
@@ -102,14 +125,14 @@ class _MyDrawingWidgetState extends State<MyDrawingWidget> {
             }
             // see if the local point is within a certain distance of the target point
             if ((localPoint -
-                        widget.targetStrokes[currentStrokeIndex]
-                            [currentOffsetIndex])
+                        targetStrokes[currentStrokeIndex][currentOffsetIndex])
                     .distance <
                 10) {
               currentOffsetIndex++;
+              print("within 10");
               // if the currentOffsetIndex is equal to the length of the stroke, then the user has completed the stroke
               if (currentOffsetIndex ==
-                  widget.targetStrokes[currentStrokeIndex].length) {
+                  targetStrokes[currentStrokeIndex].length) {
                 strokeValidity[currentStrokeIndex] = true;
               }
             }
@@ -129,6 +152,7 @@ class _MyDrawingWidgetState extends State<MyDrawingWidget> {
             width: 200, // Replace with your desired width
             height: 200, // Replace with your desired height
             child: Stack(
+              key: _canvasKey,
               children: [
                 SvgPicture.asset(
                   widget.letter.letterImage,
@@ -144,10 +168,8 @@ class _MyDrawingWidgetState extends State<MyDrawingWidget> {
         const SizedBox(height: 30),
         ElevatedButton(
           onPressed: () {
-            drawingStrokes =
-                List.generate(widget.targetStrokes.length, (index) => []);
-            strokeValidity =
-                List.generate(widget.targetStrokes.length, (index) => false);
+            drawingStrokes = List.generate(targetStrokes.length, (index) => []);
+            strokeValidity = List.generate(targetStrokes.length, (index) => false);
             drawingDistances = [];
             setState(() {
               currentOffsetIndex = 0;
@@ -173,7 +195,7 @@ class _MyDrawingWidgetState extends State<MyDrawingWidget> {
     drawingDistances.add(distance);
 
     // now check if we just finished the last stroke
-    if (currentStrokeIndex == widget.targetStrokes.length - 1) {
+    if (currentStrokeIndex == targetStrokes.length - 1) {
       endTracing();
     } else {
       // move to the next stroke
@@ -196,8 +218,8 @@ class _MyDrawingWidgetState extends State<MyDrawingWidget> {
         drawingDistances.reduce((value, element) => value + element);
 
     bool goodTrace = true;
-    // if the distance is within 20% above target distance, we assume the user has drawn the image correctly
-    if (distance > targetDistance * 1.2 || distance < targetDistance) {
+    // if the distance is upto 20% above target distance, we assume the user has drawn the image correctly
+    if (distance > targetDistance * 1.2 || distance < targetDistance * 0.8) {
       goodTrace = false;
     }
 
