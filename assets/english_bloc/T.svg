@@ -1,0 +1,10 @@
+<svg width="280" height="280" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M40.1056 56.0011C28.5074 11.6938 109.709 21.4473 211.065 22.9347C227.896 23.1817 241.507 37.4473 240.068 54.2189C238.996 66.7109 232.47 77.4997 216.189 77.4997H192.55C182.286 77.4997 173.966 85.8199 173.966 96.0835V238.24C173.966 247.355 167.483 255.159 158.538 256.912C93.7952 269.597 106.074 225.514 107.306 96.2789C107.404 85.9439 99.0566 77.4998 88.7213 77.4998H68.4609C55.2602 77.4997 43.4486 68.7718 40.1056 56.0011Z" fill="#BF2612"/>
+<ellipse cx="50" cy="51" rx="5" ry="5" transform="rotate(-180 50 51)" fill="white"/>
+<ellipse cx="140" cy="51" rx="5" ry="5" transform="rotate(-180 140 51)" fill="white"/>
+<ellipse cx="230" cy="51" rx="5" ry="5" transform="rotate(-180 230 51)" fill="white"/>
+<ellipse cx="141" cy="111" rx="5" ry="5" transform="rotate(-180 141 111)" fill="white"/>
+<ellipse cx="141" cy="177" rx="5" ry="5" transform="rotate(-180 141 177)" fill="white"/>
+<ellipse cx="141" cy="243" rx="5" ry="5" transform="rotate(-180 141 243)" fill="white"/>
+<path d="M141 247.5V50.5M141 50.5H50M141 50.5H231" stroke="white"/>
+</svg>
