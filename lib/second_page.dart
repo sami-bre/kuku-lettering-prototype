@@ -1,23 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:lettering_demo/data.dart';
 
 class SecondPage extends StatelessWidget {
+  final Letter letter;
   final List<List<Offset>> strokes;
 
-  const SecondPage({Key? key, required this.strokes}) : super(key: key);
+  const SecondPage({Key? key, required this.letter, required this.strokes})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Center(
-        child: MyDrawingWidget(strokes),
+        child: MyDrawingWidget(letter: letter, targetStrokes: strokes),
       ),
     );
   }
 }
 
 class MyDrawingWidget extends StatefulWidget {
+  final Letter letter;
   final List<List<Offset>> targetStrokes;
-  const MyDrawingWidget(this.targetStrokes, {super.key});
+  const MyDrawingWidget(
+      {required this.letter, required this.targetStrokes, super.key});
   @override
   _MyDrawingWidgetState createState() => _MyDrawingWidgetState();
 }
@@ -121,15 +128,16 @@ class _MyDrawingWidgetState extends State<MyDrawingWidget> {
           child: Container(
             width: 200, // Replace with your desired width
             height: 200, // Replace with your desired height
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                    'assets/shu.jpg'), // Replace with your image path
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: CustomPaint(
-              painter: MyPainter(drawingStrokes),
+            child: Stack(
+              children: [
+                SvgPicture.asset(
+                  widget.letter.letterImage,
+                  fit: BoxFit.fill,
+                ),
+                CustomPaint(
+                  painter: MyPainter(drawingStrokes),
+                ),
+              ],
             ),
           ),
         ),

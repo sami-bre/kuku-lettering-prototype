@@ -106,6 +106,7 @@ class _LetterFaceScreenState extends State<LetterFaceScreen> {
           print(strokes.toString());
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => SecondPage(
+                  letter: widget.letter,
                   strokes: _coordinateListKey.currentState!.strokes)));
         },
         tooltip: 'Increment',
