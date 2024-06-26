@@ -104,7 +104,8 @@ class _LetterFaceScreenState extends State<LetterFaceScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           var strokes = _coordinateListKey.currentState!.strokes;
-          print(strokes.toString());
+          print(strokes.map((stroke) =>
+              "${stroke.map((point) => "Offset(${point.dx.toStringAsFixed(4)}, ${point.dy.toStringAsFixed(4)})").toList()}").toList());
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => SecondPage(
                   letter: widget.letter,
